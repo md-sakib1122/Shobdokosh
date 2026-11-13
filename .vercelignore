@@ -1,0 +1,11 @@
+node_modules
+dist
+.venv
+.idea
+bn_phonetic
+bn_phonetic.zip
+/E2Bdatabase.json
+scripts
+word-practice-app-prompt.md
+*.tsbuildinfo
+__pycache__

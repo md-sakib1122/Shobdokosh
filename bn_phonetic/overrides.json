@@ -1,0 +1,7 @@
+{
+  "_comment": "Curated spellings that win over the engine. Load with bn_phonetic.load_overrides('overrides.json') or set BN_OVERRIDES_PATH. Keys starting with '_' are ignored.",
+  "englishjoy": "ইংলিশজয়",
+  "ielts": "আইইএলটিএস",
+  "cambridge": "কেমব্রিজ",
+  "idp": "আইডিপি"
+}

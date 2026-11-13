@@ -1,0 +1,93 @@
+[
+ {
+  "name": "enc_emb",
+  "shape": [
+   29,
+   256
+  ],
+  "offset": 0
+ },
+ {
+  "name": "enc_w_ih",
+  "shape": [
+   768,
+   256
+  ],
+  "offset": 29696
+ },
+ {
+  "name": "enc_w_hh",
+  "shape": [
+   768,
+   256
+  ],
+  "offset": 816128
+ },
+ {
+  "name": "enc_b_ih",
+  "shape": [
+   768
+  ],
+  "offset": 1602560
+ },
+ {
+  "name": "enc_b_hh",
+  "shape": [
+   768
+  ],
+  "offset": 1605632
+ },
+ {
+  "name": "dec_emb",
+  "shape": [
+   74,
+   256
+  ],
+  "offset": 1608704
+ },
+ {
+  "name": "dec_w_ih",
+  "shape": [
+   768,
+   256
+  ],
+  "offset": 1684480
+ },
+ {
+  "name": "dec_w_hh",
+  "shape": [
+   768,
+   256
+  ],
+  "offset": 2470912
+ },
+ {
+  "name": "dec_b_ih",
+  "shape": [
+   768
+  ],
+  "offset": 3257344
+ },
+ {
+  "name": "dec_b_hh",
+  "shape": [
+   768
+  ],
+  "offset": 3260416
+ },
+ {
+  "name": "fc_w",
+  "shape": [
+   74,
+   256
+  ],
+  "offset": 3263488
+ },
+ {
+  "name": "fc_b",
+  "shape": [
+   74
+  ],
+  "offset": 3339264
+ }
+]
