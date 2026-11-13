@@ -149,3 +149,9 @@ Discover first (JOURNEY.md), then lock the DNA (DESIGN.md), then systematize the
 ---
 
 ## Execution Log
+
+### Phase 1: Journey (Gate: Standard)
+- [x] BUILD: Discovery + design + production complete
+- [x] REVIEW: PASS (2 Majors resolved by orchestrator: Replace-import confirm dialog; explicit imported-wins/existing-wins collision rule)
+- [x] Committed
+Summary: JOURNEY.md defines jobs, IA (5-tab nav: Practice, Words, Add, Categories, Settings; Switch account in Settings on phone), flows F1–F6 and 7 page specs; Uncategorized is built-in and immutable, Practice filter + last Add category are remembered per account, delete has an ~8s Undo toast, combobox caps at 50 results with "Showing 50 of N".
