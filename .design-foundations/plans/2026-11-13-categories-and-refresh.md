@@ -2,7 +2,7 @@
 
 **Status:** in-progress
 **Started:** 2026-11-13
-**Current Phase:** 1
+**Current Phase:** 3
 **Track:** Full
 **Entry stage:** Discover (no DESIGN.md, no JOURNEY.md)
 **Seed:** .design-foundations/research/2026-11-13-vocabulary-categories-and-refresh.md
@@ -155,3 +155,10 @@ Discover first (JOURNEY.md), then lock the DNA (DESIGN.md), then systematize the
 - [x] REVIEW: PASS (2 Majors resolved by orchestrator: Replace-import confirm dialog; explicit imported-wins/existing-wins collision rule)
 - [x] Committed
 Summary: JOURNEY.md defines jobs, IA (5-tab nav: Practice, Words, Add, Categories, Settings; Switch account in Settings on phone), flows F1–F6 and 7 page specs; Uncategorized is built-in and immutable, Practice filter + last Add category are remembered per account, delete has an ~8s Undo toast, combobox caps at 50 results with "Showing 50 of N".
+
+### Phase 2: Design DNA, type + color (Gate: Full)
+- [x] BUILD: Discovery + design + production complete
+- [x] REVIEW: PASS (no Critical/Major; Minors carried to Phase 3: no letterspaced caps on section labels, emit prefers-color-scheme dark block, thin 4.60:1 dark on-solid margin)
+- [x] User confirmed DESIGN.md — token block locked
+- [x] Committed
+Summary: DESIGN.md locked as "Ruled Ink" — Sage/editorial-minimal; Newsreader serif for the English word, titles and wordmark, Anek Latin + Anek Bangla for UI/Bangla; one muted ink-violet accent (hue 278, #5358ad light / #646bbd dark) on cool lavender-grey neutrals; a 1px left margin rule as signature; flat hairline cards, square chips, 120/180/260ms state-only motion; all text pairs AA in light + dark, interactive non-text ≥3:1 via overrides (--border-interactive, dark --accent-solid → accent-10).
