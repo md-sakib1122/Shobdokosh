@@ -1,6 +1,6 @@
 # JOURNEY.md
 
-Structural and temporal spec for ShobdoPractice. For visual tokens, see DESIGN.md (created in Phase 2). Microcopy is provisional until Phase 3; strings in quotes are placeholders, not final.
+Structural and temporal spec for ShobdoPractice. For visual tokens, see DESIGN.md (created in Phase 2). Final microcopy lives in `## Microcopy` (Phase 3); strings quoted elsewhere in this file are superseded by it.
 
 Owner: product owner (project user). Research basis: UNGROUNDED (brief + reading the current app; no interviews). Update cadence: whenever a phase changes a flow or page.
 
@@ -59,7 +59,7 @@ App (signed in)
 Overlay: Word details dialog (from Practice or Words via ?open=<id>)
 ```
 
-**Labels:** Practice, Words, Add, Categories, Settings. The old "All Words" tab is now "Words" (shorter for a 5-item phone bar); the page heading may read "All Words". Phase 3 confirms.
+**Labels:** Practice, Words, Add, Categories, Settings. The old "All Words" tab is now "Words" (shorter for a 5-item phone bar); the page heading also reads "Words" (confirmed in Phase 3).
 **Badges:** Practice and Words show TOTAL counts, unaffected by any category filter (decision on research Q4).
 **Account switcher:** desktop header shows email + "Switch account". On phone the header shows only the wordmark; "Switch account" lives in Settings > Account (frees width, the bar already holds 5 items).
 **Persistent state (per account):**
@@ -142,6 +142,7 @@ Common: all pages sit inside the shell (phone bottom tab bar, desktop top nav); 
 **Entry points:** first visit; "Switch account"; after delete account; any route when signed out.
 **Content blocks:** 1) wordmark and one-line product description; 2) email field with label; 3) "Continue" button; 4) one-line note that data is stored only in this browser.
 **States:** default; error (invalid email: inline, field focused); storage-unavailable (note that changes are kept in memory only); returning vs new account is not distinguished (same action). No empty/filtered state.
+**Copy:** `## Microcopy` > Login.
 **Primary action:** Continue -> /practice.
 **Exit / next:** Practice. Existing v1 data migrates silently on first load; no migration UI.
 
@@ -157,6 +158,7 @@ Common: all pages sit inside the shell (phone bottom tab bar, desktop top nav); 
 - *Stale remembered category (edge case):* load falls back to All categories and shows a dismissible note "Category 'X' no longer exists - showing all." (F5).
 - *Category deleted while selected (edge case):* handled in F4, same fallback; no note beyond the Undo toast.
 - *Error:* none specific; word lookup/storage errors surface via toast and the storage banner. Combobox no-match: "No categories match 'q'".
+**Copy:** `## Microcopy` > Practice.
 **Primary action:** type the spelling and Verify on a card.
 **Exit / next:** Word details; Words (move learned); Add.
 
@@ -171,6 +173,7 @@ Common: all pages sit inside the shell (phone bottom tab bar, desktop top nav); 
 - *Filtered/searched with 0 results:* "No words match" naming the active category and/or query, with "Clear filters" (and, when only the category is active and Practice holds words in it, a link "N words in <Category> are still in Practice").
 - *Category param missing/stale (`?category=` unknown id):* ignored, shows All categories.
 - *Error:* none specific; combobox no-match as above.
+**Copy:** `## Microcopy` > Words.
 **Primary action:** pick a category / search to find a word; per card "Move to Practice".
 **Exit / next:** Word details; Practice.
 
@@ -188,6 +191,7 @@ Common: all pages sit inside the shell (phone bottom tab bar, desktop top nav); 
 - *Stale `lastAddCategory` (edge case):* silently falls back to Uncategorized (F5).
 - *Duplicate word:* error with link to the existing word (existing behaviour); no category UI shown.
 - *Error:* lookup failure -> manual fields (existing); category creation failure -> inline error, selection unchanged.
+**Copy:** `## Microcopy` > Add.
 **Primary action:** Save to Practice.
 **Exit / next:** stays on Add with the form reset and the same category kept; toast links to Practice (filtered to the category is NOT automatic).
 
@@ -203,6 +207,7 @@ Common: all pages sit inside the shell (phone bottom tab bar, desktop top nav); 
 - *Renaming (edge case: duplicate name):* inline field with live validation; duplicate (case-insensitive, any other category including Uncategorized) shows "You already have a category called X" and disables Save; own-name case change allowed (F3).
 - *Delete confirm:* dialog per F4; N, P, L counts in the sentence; an Undo toast afterwards.
 - *Create errors:* blank, over 40, invalid characters, duplicate -> inline, Create disabled.
+**Copy:** `## Microcopy` > Categories.
 **Primary action:** New category (empty state: "Create a category").
 **Exit / next:** a row's count is not a link in v1; users reach the words through Practice/Words filters (a "View words" link per row is a Phase 3 option, `/words?category=`).
 
@@ -217,6 +222,7 @@ Common: all pages sit inside the shell (phone bottom tab bar, desktop top nav); 
 - *Stale remembered category after replace (edge case):* handled by F5 on the next Practice/Add load.
 - *Storage unavailable:* shell banner (existing); export remains the recovery path.
 - *Delete account:* two-step inline confirm (existing).
+**Copy:** `## Microcopy` > Settings.
 **Primary action:** Export my data (safe, most frequent). Import is secondary.
 **Exit / next:** Login (after delete or switch).
 
@@ -231,10 +237,99 @@ Common: all pages sit inside the shell (phone bottom tab bar, desktop top nav); 
 - *Zero categories besides Uncategorized:* the Change popover lists only Uncategorized and a hint "Create categories in the Categories tab" with a link.
 - *200+:* same capped list and "Showing N of M" footer as the combobox elsewhere.
 - *Lookup error / not found:* existing state with Retry; *delete confirm:* existing two-step.
+**Copy:** `## Microcopy` > Word details dialog.
 **Primary action:** Edit (view mode) / Save (edit mode). Category Change is a direct control.
 **Exit / next:** closes back to the underlying page (clears `?open=`), Esc and backdrop close.
 
 ---
+
+## Microcopy
+
+Final copy (Phase 3). It supersedes every quoted placeholder above; where a flow or page spec quotes different wording, this section wins. Each page spec carries a **Copy:** pointer to its block here.
+
+**Voice rules.** Plain and calm, like a patient tutor: short sentences, sentence case, no exclamation marks, no "Oops", no blame (Yifrah: what happened, why, what to do; Redish: front-load). Buttons are verb + object. User-supplied names sit in curly quotes (“Exam prep”). Spaced en dashes (a – b), never hyphens as dashes. US spelling: "practice" for noun and verb (matches the nav label). Plurals: "1 word", "2 words", "No words". UI copy is English; Bangla appears only in meanings and pronunciations (`lang="bn"`). Counts in curly braces below are placeholders.
+**Allowed category characters** (single definition, Phase 5 validates identically): English letters A–Z (user decision: category names are English only), digits, spaces, and `- ' & , . ( ) /`; trimmed; 1 to 40 characters; must contain a letter or digit; matching is case-insensitive.
+
+### Navigation and shell
+- Nav labels: **Practice, Words, Add, Categories, Settings.** ("All Words" is retired: the tab and page heading are both "Words".) Page headings: Practice, Words, Add a word, Categories, Settings.
+- Desktop header: "{email}", "Switch account". Phone Settings > Account: "Signed in as {email}", "Switch account".
+- Badge accessible names: "{n} words in practice", "{n} words".
+- Storage unavailable banner: "This browser isn't saving data right now. Changes are kept only until you close this tab. Export your words from Settings to keep a copy."
+- Generic save failure toast: "Couldn't save. Your last change wasn't kept."
+
+### Login
+Tagline: "Practice spelling for the words you are learning." · Field "Email" · Button "Continue" · Note: "Your words are stored only in this browser." · Error: "Enter an email address like name@example.com."
+
+### Practice
+- Heading "Practice" + badge. Filter label: "Category" (value shows "All categories" by default). Filter hidden until a category besides Uncategorized exists.
+- Filtered line: "{N} words in {Category}" · button "Clear filter".
+- Card (orchestrator correction — preserves the existing practice mechanic): prompt = Bangla pronunciation (large, `lang="bn"`), Bangla meaning beneath as the secondary line; the English word stays hidden until Verify on both Practice and Words cards (no letter-count hint); field label (visually hidden) "Spell the word"; placeholder "Type the English word"; button "Verify"; icon buttons "Hear pronunciation of {word}", "Move to Words", "Details"; empty-submit error "Type the word first, then Verify."; chip title "Category: {Category}".
+- Empty, no practice words: **"No words to practice"** / "Add a word and it will appear here." / [Add a word].
+- Filtered, none left, variant a: **"All words in {Category} are learned"** / "They're in Words if you want to look at them again." / [View in Words] [Clear filter].
+- Filtered, empty, variant b: **"{Category} has no words yet"** / "Add a word to start this list." / [Add a word to {Category}] [Clear filter].
+- Stale remembered category (dismissible note): "The category “{X}” no longer exists. Showing all words." · Dismiss.
+- Category deleted while selected: no note; the delete toast covers it (see Categories).
+
+### Words
+- Heading "Words" + badge. Search label "Search words", placeholder "English or Bangla". Category label "Category". Sort label "Sort": "Newest first", "A to Z". Result line: "{N} of {M} words shown" · button "Clear filters" when any control is active. Per card: "Move to Practice", "Details".
+- Empty, no learned words: **"No learned words yet"** / "Words you finish in Practice are kept here." / [Go to Practice].
+- No matches: title "No words match" and one body line: query only "Nothing matches “{q}”." · category only "No learned words in {Category} yet." · both "Nothing matches “{q}” in {Category}." Actions: [Clear filters]; when only a category is active and Practice holds some: link "{N} words in {Category} are still in Practice".
+- Unknown `?category=`: silent fallback to All categories.
+
+### Add
+- Heading "Add a word". Field "English word" · button "Look up".
+- Duplicate: "“{word}” is already in {Practice|Words}." · link "Open {word}".
+- Lookup failure: "We couldn't look this up. Fill in the meaning yourself, or try again." · [Try again].
+- Category field: label "Category" · helper "Each word goes in one category." · pre-filled, never empty.
+- Combobox, create mode: create row "Create “{text}”" · empty-query hint (zero categories) "Type a name to create a category." · cap footer "Showing 50 of {M} – keep typing to narrow." · no match "No categories match “{q}”." · existing name in another case "“{Existing}” already exists. Press Enter to use it." · invalid: empty "Enter a category name." / long "Use 40 characters or fewer ({n}/40)." / characters "Use English letters, numbers, spaces and - ' & , . ( ) / only." · create failure "Couldn't create the category. Nothing was changed."
+- Toasts: "Category “{text}” created." · "“{word}” added to {Category}." with link "Practice".
+- Buttons: "Save to Practice", "Cancel". Placeholder-free labels everywhere.
+
+### Categories
+- Heading "Categories" + count "{n} categories". Search label "Search categories". Buttons: "New category", "Create", "Cancel", "Rename", "Save", "Delete", "Show 50 more". Field label "Category name". Sort: "A to Z", "Most words".
+- Row: "{n} words" / "1 word" / "No words". Uncategorized: "Built in – can't be renamed or deleted".
+- Empty (zero besides Uncategorized): **"Group your words into lists"** / "Categories let you practice one list at a time. Words you add without one go in Uncategorized." / [Create a category].
+- Paged list: "Showing {n} of {M}" (announced politely after each page).
+- Search no match: "No categories match “{q}”." + [Create “{q}”] when valid and not a duplicate.
+- Validation (create and rename): empty "Enter a category name." · long "Use 40 characters or fewer ({n}/40)." · characters "Use English letters, numbers, spaces and - ' & , . ( ) / only." · duplicate (any other category, any case, incl. Uncategorized) "You already have a category called “{X}”."
+- Toasts: "Category “{X}” created." · "Renamed to “{X}”." · after delete "“{X}” deleted. {N} words moved to Uncategorized." + [Undo] · after Undo "“{X}” restored." · delete failure "Couldn't delete “{X}”. Nothing was changed." · rename/create failure "Couldn't save the category. Nothing was changed."
+- **Delete dialog.** Title: "Delete “{X}”?" Body: "Its {N} words move to Uncategorized ({P} in practice, {L} learned). The words themselves are not deleted." · N=1: "Its 1 word moves to Uncategorized (…)" · N=0: "It has no words." Buttons: [Cancel] (default focus), [Delete category].
+
+### Settings
+- Sections: "Account", "Your data", "Delete account". "Signed in as {email}" · [Switch account].
+- Export: [Export my data (.json)] · helper "Includes your words and categories."
+- Import: file field "Choose a .json file" · legend "If a word or category already exists": **Merge** – "Keep what you have and add the file's words and categories. Categories with the same name are combined." · **Replace everything** – (warn glyph) "Deletes your current words and categories and uses only the file's." · [Import].
+- Import errors (inline under the file field): none chosen "Choose a file first." · "That file isn't valid JSON. Choose a ShobdoPractice export (.json)." · newer version "This file was made by a newer version of ShobdoPractice and can't be imported." · wrong shape "This file doesn't look like a ShobdoPractice export."
+- Merge summary toast (12s, omit clauses that are 0 except the first): "Import done. Added {A} words, updated {U}. Categories: {C} created, {M} merged into existing. {X} words placed in Uncategorized."
+- **Replace confirm.** Title "Replace everything?" Body: "Your {N} words and {K} categories will be replaced with the file's {W} words and {C} categories. This can't be undone. Export first if you want a copy." Buttons: [Cancel] (default focus), [Replace everything].
+- Delete account confirm: "Delete this account? All words and categories saved here for {email} are removed from this browser. This can't be undone." · [Cancel] (default focus), [Delete account].
+
+### Word details dialog
+- Title: the word. Category row: label "Category", chip (full name, wraps), [Change]. Change popover = combobox, change mode. Toast: "Moved to {Category}."
+- Zero categories besides Uncategorized: hint "Create categories in the Categories tab." with link "Go to Categories".
+- Cap footer, no-match: as in Add (no create row).
+- Delete word: "Delete “{word}”? This can't be undone." · [Cancel] (default focus), [Delete word]. Lookup failed: "We couldn't look this up." · [Retry lookup]. Edit: [Edit], [Save], [Cancel].
+
+### Screen-reader announcements (polite status)
+- Combobox (counts category options only; the "All categories" row is never counted): "{n} categories" / "1 category" / "No categories match “{q}”" / "{n} of {M} categories shown" / "1 category. “{X}” already exists. Press Enter to use it." / on invalid create the reason.
+- Result lines and counts on Practice, Words, Categories are `role="status"`. Toasts: `role="status"`; errors `role="alert"`.
+
+### Edge-case matrix (Phases 1 and 3)
+| Edge case | Copy | Page spec |
+|-----------|------|-----------|
+| Zero categories besides Uncategorized | "Group your words into lists…" (Categories); "Type a name to create a category." (Add); "Create categories in the Categories tab." (Word details); filter hidden (Practice, Words) | Categories, Add, Word-details |
+| 200+ categories | "Showing 50 of {M} – keep typing to narrow."; "Showing {n} of {M}" + "Show 50 more" | Add, Categories, Word-details |
+| Delete the filtered/remembered category | Delete dialog; toast "“{X}” deleted. {N} words moved to Uncategorized." + Undo; no other notice | Categories, Practice |
+| Filtered Practice with 0 words | "All words in {Category} are learned" / "{Category} has no words yet" | Practice |
+| Rename to a duplicate | "You already have a category called “{X}”." | Categories |
+| Remembered category no longer exists | "The category “{X}” no longer exists. Showing all words." (Practice); silent to Uncategorized (Add) | Practice, Add |
+| Combobox no results | "No categories match “{q}”." (+ create row in create mode) | Add, Practice, Words, Word-details |
+| Typed name matches an existing category, different case | "“{Existing}” already exists. Press Enter to use it."; create row hidden; stored name unchanged | Add (combobox) |
+| Long category name | chip truncates at 14rem, `title` = full name; full name wraps in Word details; option rows truncate with `title` | Practice, Words, Word-details, Categories |
+| Keyboard-only use | key map in DESIGN.md `## Components` > Category combobox; Delete/Replace dialogs focus Cancel first | all |
+| Screen-reader result count | status strings above | Add, Practice, Words, Categories |
+| Import collisions | merge summary toast; Replace confirm | Settings |
+| Storage unavailable / save failure | banner + "Couldn't save. Your last change wasn't kept." | shell |
 
 ## Edge-case index (DW-1.3)
 
@@ -248,5 +343,5 @@ Common: all pages sit inside the shell (phone bottom tab bar, desktop top nav); 
 | Remembered category that no longer exists | F5; Practice (stale note); Add (stale fallback); Settings (after replace) |
 
 ## Open items for later phases
-- Phase 3: final microcopy, the combobox spec (listbox cap, announcements), toast Undo behaviour, a possible "View words" link per Categories row, confirm the nav label "Words".
+- Phase 3 (done): microcopy, combobox spec, toast Undo behaviour, nav label "Words" confirmed; no "View words" link per Categories row (Words lists learned words only).
 - Phase 5: store `practiceCategory` and `lastAddCategory` inside the account (not separate global keys) so they survive account switching correctly; Undo for delete needs to hold the moved word ids for the toast lifetime.

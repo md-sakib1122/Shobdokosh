@@ -1,0 +1,195 @@
+/* GENERATED from DESIGN.md fenced token blocks (palette + overrides). Dark emitted twice: OS-driven and forced. */
+:root {
+  --neutral-1: #fcfdfd;
+  --neutral-2: #f8f9fa;
+  --neutral-3: #f0f0f3;
+  --neutral-4: #e7e7ec;
+  --neutral-5: #dcdee3;
+  --neutral-6: #d0d2d9;
+  --neutral-7: #c1c3cc;
+  --neutral-8: #a8aab4;
+  --neutral-9: #60626e;
+  --neutral-10: #50525c;
+  --neutral-11: #62636a;
+  --neutral-12: #2d2e31;
+  --accent-1: #fcfdff;
+  --accent-2: #f7f8ff;
+  --accent-3: #edefff;
+  --accent-4: #e2e6ff;
+  --accent-5: #d6dcff;
+  --accent-6: #c7cfff;
+  --accent-7: #b5befe;
+  --accent-8: #9aa4ef;
+  --accent-9: #5358ad;
+  --accent-10: #444896;
+  --accent-11: #585e90;
+  --accent-12: #282b45;
+  --accent-on-solid: #f9faff;
+  --error-3: #ffebe9;
+  --error-9: #c56c65;
+  --error-11: #86534f;
+  --success-3: #e6f6e6;
+  --success-9: #84cc86;
+  --success-11: #486e49;
+  --warning-3: #f6f0e4;
+  --warning-9: #ceb47e;
+  --warning-11: #6f6144;
+  --info-3: #e7f2fa;
+  --info-9: #7aabce;
+  --info-11: #4c677a;
+  --background: var(--neutral-1);
+  --surface: var(--neutral-2);
+  --surface-hover: var(--neutral-3);
+  --surface-active: var(--neutral-4);
+  --border-subtle: var(--neutral-6);
+  --border: var(--neutral-7);
+  --border-strong: var(--neutral-8);
+  --text-secondary: var(--neutral-11);
+  --text: var(--neutral-12);
+  --accent-bg-subtle: var(--accent-3);
+  --accent-solid: var(--accent-9);
+  --accent-solid-hover: var(--accent-10);
+  --accent-text: var(--accent-11);
+  --rule: var(--accent-7);                 /* the margin rule; decorative, no contrast duty */
+  --border-interactive: var(--neutral-9);  /* field/boundary borders that must meet 3:1: 5.94:1 vs background */
+  --focus-ring: var(--accent-9);           /* 2px ring, 2px offset: 6.12:1 vs background */
+  --shadow-color: 40 43 69;                /* accent-12 as RGB triplet; shadows are hue-shifted, never black */
+  --shadow-dialog: 0 12px 32px -12px rgb(var(--shadow-color) / 0.28);
+  --shadow-toast:  0 6px 20px -8px rgb(var(--shadow-color) / 0.24);
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --neutral-1: #121313;
+    --neutral-2: #19191a;
+    --neutral-3: #222224;
+    --neutral-4: #292a2d;
+    --neutral-5: #313236;
+    --neutral-6: #3a3b41;
+    --neutral-7: #474950;
+    --neutral-8: #5e6069;
+    --neutral-9: #60626e;
+    --neutral-10: #72747f;
+    --neutral-11: #b5b7be;
+    --neutral-12: #e7e7ec;
+    --accent-1: #121216;
+    --accent-2: #181920;
+    --accent-3: #1f2130;
+    --accent-4: #25283f;
+    --accent-5: #2b2f50;
+    --accent-6: #333762;
+    --accent-7: #3e4379;
+    --accent-8: #52599d;
+    --accent-9: #5358ad;
+    --accent-10: #646bbd;
+    --accent-11: #abb3eb;
+    --accent-12: #e2e6ff;
+    --accent-on-solid: #f9faff;
+    --error-3: #2d1d1c;
+    --error-9: #c56c65;
+    --error-11: #e0a7a1;
+    --success-3: #1a261a;
+    --success-9: #84cc86;
+    --success-11: #9bc49b;
+    --warning-3: #262219;
+    --warning-9: #ceb47e;
+    --warning-11: #c5b696;
+    --info-3: #1b2329;
+    --info-9: #7aabce;
+    --info-11: #9fbcd1;
+    --background: var(--neutral-1);
+    --surface: var(--neutral-2);
+    --surface-hover: var(--neutral-3);
+    --surface-active: var(--neutral-4);
+    --border-subtle: var(--neutral-6);
+    --border: var(--neutral-7);
+    --border-strong: var(--neutral-8);
+    --text-secondary: var(--neutral-11);
+    --text: var(--neutral-12);
+    --accent-bg-subtle: var(--accent-3);
+    --accent-solid: var(--accent-9);
+    --accent-solid-hover: var(--accent-10);
+    --accent-text: var(--accent-11);
+    --accent-solid: var(--accent-10);        /* #646bbd: 3.88:1 vs background, label text 4.60:1 */
+    --accent-solid-hover: var(--accent-9);   /* one step deeper on hover, as in light; label text 5.96:1 */
+    --rule: var(--accent-7);
+    --border-interactive: var(--neutral-10); /* 4.01:1 vs background */
+    --focus-ring: var(--accent-11);          /* 9.20:1 vs background */
+    --shadow-color: 8 8 16;
+    --shadow-dialog: 0 12px 32px -12px rgb(var(--shadow-color) / 0.6);
+    --shadow-toast:  0 6px 20px -8px rgb(var(--shadow-color) / 0.55);
+  }
+}
+:root[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] {
+  --neutral-1: #121313;
+  --neutral-2: #19191a;
+  --neutral-3: #222224;
+  --neutral-4: #292a2d;
+  --neutral-5: #313236;
+  --neutral-6: #3a3b41;
+  --neutral-7: #474950;
+  --neutral-8: #5e6069;
+  --neutral-9: #60626e;
+  --neutral-10: #72747f;
+  --neutral-11: #b5b7be;
+  --neutral-12: #e7e7ec;
+  --accent-1: #121216;
+  --accent-2: #181920;
+  --accent-3: #1f2130;
+  --accent-4: #25283f;
+  --accent-5: #2b2f50;
+  --accent-6: #333762;
+  --accent-7: #3e4379;
+  --accent-8: #52599d;
+  --accent-9: #5358ad;
+  --accent-10: #646bbd;
+  --accent-11: #abb3eb;
+  --accent-12: #e2e6ff;
+  --accent-on-solid: #f9faff;
+  --error-3: #2d1d1c;
+  --error-9: #c56c65;
+  --error-11: #e0a7a1;
+  --success-3: #1a261a;
+  --success-9: #84cc86;
+  --success-11: #9bc49b;
+  --warning-3: #262219;
+  --warning-9: #ceb47e;
+  --warning-11: #c5b696;
+  --info-3: #1b2329;
+  --info-9: #7aabce;
+  --info-11: #9fbcd1;
+  --background: var(--neutral-1);
+  --surface: var(--neutral-2);
+  --surface-hover: var(--neutral-3);
+  --surface-active: var(--neutral-4);
+  --border-subtle: var(--neutral-6);
+  --border: var(--neutral-7);
+  --border-strong: var(--neutral-8);
+  --text-secondary: var(--neutral-11);
+  --text: var(--neutral-12);
+  --accent-bg-subtle: var(--accent-3);
+  --accent-solid: var(--accent-9);
+  --accent-solid-hover: var(--accent-10);
+  --accent-text: var(--accent-11);
+  --accent-solid: var(--accent-10);        /* #646bbd: 3.88:1 vs background, label text 4.60:1 */
+  --accent-solid-hover: var(--accent-9);   /* one step deeper on hover, as in light; label text 5.96:1 */
+  --rule: var(--accent-7);
+  --border-interactive: var(--neutral-10); /* 4.01:1 vs background */
+  --focus-ring: var(--accent-11);          /* 9.20:1 vs background */
+  --shadow-color: 8 8 16;
+  --shadow-dialog: 0 12px 32px -12px rgb(var(--shadow-color) / 0.6);
+  --shadow-toast:  0 6px 20px -8px rgb(var(--shadow-color) / 0.55);
+  color-scheme: dark;
+}
+
+:root {
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px; --space-5: 20px;
+  --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+  --radius-sm: 4px; --radius-md: 6px; --radius-lg: 10px; --radius-badge: 9px;
+  --duration-micro: 120ms; --duration-standard: 180ms; --duration-large: 260ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1); --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --control-h: 2.75rem;      /* 44px: every interactive element */
+  --content-max: 1040px;
+  --ring-width: 2px; --ring-offset: 2px;
+}

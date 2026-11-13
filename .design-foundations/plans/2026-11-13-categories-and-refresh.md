@@ -2,7 +2,7 @@
 
 **Status:** in-progress
 **Started:** 2026-11-13
-**Current Phase:** 3
+**Current Phase:** 4
 **Track:** Full
 **Entry stage:** Discover (no DESIGN.md, no JOURNEY.md)
 **Seed:** .design-foundations/research/2026-11-13-vocabulary-categories-and-refresh.md
@@ -162,3 +162,10 @@ Summary: JOURNEY.md defines jobs, IA (5-tab nav: Practice, Words, Add, Categorie
 - [x] User confirmed DESIGN.md — token block locked
 - [x] Committed
 Summary: DESIGN.md locked as "Ruled Ink" — Sage/editorial-minimal; Newsreader serif for the English word, titles and wordmark, Anek Latin + Anek Bangla for UI/Bangla; one muted ink-violet accent (hue 278, #5358ad light / #646bbd dark) on cool lavender-grey neutrals; a 1px left margin rule as signature; flat hairline cards, square chips, 120/180/260ms state-only motion; all text pairs AA in light + dark, interactive non-text ≥3:1 via overrides (--border-interactive, dark --accent-solid → accent-10).
+
+### Phase 3: Design system + words (Gate: Full)
+- [x] BUILD: Discovery + design + production complete (+2 fix passes)
+- [x] REVIEW: FAIL ×3 → escalated to user at the 3-attempt cap. Final blocker (missing N/A reason on the category-row state) fixed by the orchestrator with user approval. Last review: no Critical/Major; DW-3.2, DW-3.3 and all edge cases PASS.
+- [x] Orchestrator corrections: category names English-only (user decision, overriding "any script"); Practice/Words cards keep the existing mechanic (Bangla pronunciation prompt, meaning beneath, English hidden until Verify); reference mode only in Word details.
+- [x] Committed
+Summary: DESIGN.md `## Components` (rules, state matrix, specs for button/field/combobox/chip/card/nav/dialog/toast/panel/category row, Tailwind mapping) and JOURNEY.md `## Microcopy` (final copy for every page, edge case and SR announcement; nav label "Words"); reference sheet mocks/components.html in light/dark at 390/1280; 100/100 contrast pairs pass.
