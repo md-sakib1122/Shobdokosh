@@ -1,8 +1,22 @@
+# Dependencies & build
 node_modules/
 dist/
+coverage/
+*.tsbuildinfo
+
+# Python
 .venv/
 __pycache__/
 *.pyc
 .pytest_cache/
-*.tsbuildinfo
+
+# Env & logs
+.env*
+*.log
+
+# Editors / OS / tools
+.idea/
+.vscode/
+.claude/
+.DS_Store
 .vercel

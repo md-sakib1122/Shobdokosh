@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { needsRetry, retryLookups } from "../lib/lookup";
 import { removeWord, updateWord, type Word } from "../lib/storage";
+import { useCategories } from "../state/useCategories";
+import CategoryChip from "./CategoryChip";
+import CategoryCombobox from "./CategoryCombobox";
+import ConfirmDialog from "./ConfirmDialog";
+import { IconClose } from "./Icons";
 import { useAccount, useDB } from "../state/DBContext";
 import MeaningView from "./MeaningView";
 import SpeakButton from "./SpeakButton";
@@ -19,6 +25,16 @@ export default function WordDetails({ word, onClose }: Props) {
   const [editing, setEditing] = useState(false);
   const [retrying, setRetrying] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [changing, setChanging] = useState(false);
+  const cats = useCategories();
+  const category = cats.of(word.categoryId);
+
+  const changeCategory = (id: string) => {
+    setChanging(false);
+    if (id === word.categoryId) return;
+    update((db) => updateWord(db, account.email, word.id, { categoryId: id }));
+    toast(`Moved to ${cats.of(id).name}.`, "success");
+  };
 
   useEffect(() => {
     const d = ref.current;
@@ -65,45 +81,65 @@ export default function WordDetails({ word, onClose }: Props) {
       ref={ref}
       onClose={onClose}
       onClick={(e) => { if (e.target === ref.current) ref.current?.close(); }}
-      className="w-[calc(100%-2rem)] max-w-lg rounded-2xl p-0 shadow-2xl backdrop:bg-slate-900/50"
+      className="dialog max-w-[36rem]"
       aria-labelledby={`details-${word.id}`}
     >
-      <div className="max-h-[85vh] overflow-y-auto p-5">
-        <div className="mb-4 flex items-start gap-3">
+      <div className="max-h-[85vh] overflow-y-auto p-6">
+        <div className="mb-5 flex items-start gap-2">
           <div className="min-w-0 flex-1">
-            <h2 id={`details-${word.id}`} className="break-words text-2xl font-bold">{word.word}</h2>
-            <p className="bn text-xl text-teal-800" lang="bn">
-              {word.bnPronunciation ?? <span className="font-sans text-base text-slate-400">no Bangla spelling</span>}
-              {!word.pronReliable && <span className="ml-2 chip font-sans" title="Guessed spelling (not from the dictionary)">?</span>}
+            <h2 id={`details-${word.id}`} className="display break-words text-2xl font-medium md:text-3xl">{word.word}</h2>
+            <p className="bn mt-1 text-lg text-text-secondary" lang="bn">
+              {word.bnPronunciation ?? <span className="font-body text-base">No Bangla spelling</span>}
+              {!word.pronReliable && <span className="chip ml-2 font-body" title="Guessed spelling (not from the dictionary)">?</span>}
             </p>
           </div>
           <SpeakButton word={word.word} audioUrl={word.audioUrl} />
-          <button className="btn-icon text-slate-500 hover:bg-slate-100" onClick={() => ref.current?.close()} aria-label="Close">✕</button>
+          <button className="btn-icon -mr-2" onClick={() => ref.current?.close()} aria-label="Close"><IconClose /></button>
         </div>
+
+        <section className="mb-5" aria-labelledby={`cat-${word.id}`}>
+          <h3 id={`cat-${word.id}`} className="section-title mb-1.5">Category</h3>
+          {changing ? (
+            <CategoryCombobox
+              label="Category"
+              hideLabel
+              categories={cats.categories}
+              counts={cats.counts}
+              value={word.categoryId}
+              onChange={changeCategory}
+              emptyHint={<>Create categories in the Categories tab. <Link className="font-semibold text-accent-text underline underline-offset-4" to="/categories">Go to Categories</Link></>}
+            />
+          ) : (
+            <div className="flex flex-wrap items-center gap-2">
+              <CategoryChip category={category} wrap />
+              <button type="button" className="btn-ghost" onClick={() => setChanging(true)}>Change</button>
+            </div>
+          )}
+        </section>
 
         {!editing ? (
           <div className="space-y-4">
             <section>
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Bangla meaning</h3>
-              {word.bnMeaning ? <MeaningView bn={word.bnMeaning} lemma={word.meaningLemma} /> : <p className="text-sm text-slate-400">Not found</p>}
+              <h3 className="section-title mb-1.5">Bangla meaning</h3>
+              {word.bnMeaning ? <MeaningView bn={word.bnMeaning} lemma={word.meaningLemma} /> : <p className="text-sm text-text-secondary">Not found</p>}
             </section>
             <section>
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Definition {word.partOfSpeech && <span className="chip ml-1 normal-case">{word.partOfSpeech}</span>}
+              <h3 className="section-title mb-1.5">
+                Definition {word.partOfSpeech && <span className="chip ml-1">{word.partOfSpeech}</span>}
               </h3>
               {word.definition ? <p>{word.definition}</p> : (
-                <p className="text-sm text-slate-400">{word.definitionStatus === "notfound" ? "No definition found" : "Not loaded"}</p>
+                <p className="text-sm text-text-secondary">{word.definitionStatus === "notfound" ? "No definition found" : "Not loaded"}</p>
               )}
             </section>
             <section>
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Sentence</h3>
-              {word.sentence ? <p className="italic">“{word.sentence}”</p> : <p className="text-sm text-slate-400">None</p>}
+              <h3 className="section-title mb-1.5">Example sentence</h3>
+              {word.sentence ? <p className="display text-lg">“{word.sentence}”</p> : <p className="text-sm text-text-secondary">None</p>}
             </section>
-            <section className="grid grid-cols-3 gap-2 rounded-xl bg-slate-50 p-3 text-center text-sm">
-              <div><div className="text-lg font-semibold tabular-nums">{word.stats.attempts}</div>attempts</div>
-              <div><div className="text-lg font-semibold tabular-nums">{word.stats.correct}</div>correct</div>
-              <div><div className="text-lg font-semibold tabular-nums">{word.stats.streak}</div>streak</div>
-              <p className="col-span-3 text-xs text-slate-500">
+            <section className="divider grid grid-cols-3 gap-2 pt-4 text-sm text-text-secondary">
+              <div><div className="text-lg font-semibold tabular-nums text-text">{word.stats.attempts}</div>attempts</div>
+              <div><div className="text-lg font-semibold tabular-nums text-text">{word.stats.correct}</div>correct</div>
+              <div><div className="text-lg font-semibold tabular-nums text-text">{word.stats.streak}</div>streak</div>
+              <p className="col-span-3 text-xs">
                 Last practised: {word.stats.lastPracticedAt ? new Date(word.stats.lastPracticedAt).toLocaleString() : "never"}
               </p>
             </section>
@@ -112,14 +148,7 @@ export default function WordDetails({ word, onClose }: Props) {
                 <button className="btn-primary" onClick={retry} disabled={retrying}>{retrying ? "Retrying…" : "Retry lookup"}</button>
               )}
               <button className="btn-secondary" onClick={() => setEditing(true)}>Edit</button>
-              {!confirmDelete ? (
-                <button className="btn-ghost text-rose-700" onClick={() => setConfirmDelete(true)}>Delete</button>
-              ) : (
-                <span className="flex items-center gap-2">
-                  <button className="btn-danger" onClick={del}>Delete “{word.word}”</button>
-                  <button className="btn-ghost" onClick={() => setConfirmDelete(false)}>Cancel</button>
-                </span>
-              )}
+              <button className="btn-ghost text-error-11 hover:bg-error-3" onClick={() => setConfirmDelete(true)}>Delete word</button>
             </div>
           </div>
         ) : (
@@ -153,6 +182,16 @@ export default function WordDetails({ word, onClose }: Props) {
           </form>
         )}
       </div>
+      {confirmDelete && (
+        <ConfirmDialog
+          title={`Delete “${word.word}”?`}
+          confirmLabel="Delete word"
+          onConfirm={del}
+          onCancel={() => setConfirmDelete(false)}
+        >
+          <p>This can't be undone.</p>
+        </ConfirmDialog>
+      )}
     </dialog>
   );
 }

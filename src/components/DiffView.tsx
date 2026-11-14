@@ -3,10 +3,10 @@ import type { DiffOp, DiffType } from "../lib/diff";
 // Colour is always paired with a symbol and a distinct underline/strike so the
 // diff reads without colour vision.
 const STYLE: Record<DiffType, { box: string; mark: string; label: string }> = {
-  correct: { box: "bg-emerald-50 text-emerald-900 ring-emerald-300", mark: "✓", label: "correct" },
-  wrong: { box: "bg-rose-50 text-rose-900 ring-rose-400 underline decoration-wavy decoration-rose-500 underline-offset-4", mark: "✗", label: "wrong letter" },
-  extra: { box: "bg-amber-50 text-amber-900 ring-amber-400 line-through decoration-2", mark: "+", label: "extra letter" },
-  missing: { box: "bg-sky-50 text-sky-900 ring-sky-400 ring-dashed border-dashed underline decoration-dotted decoration-2 underline-offset-4", mark: "^", label: "missing letter" },
+  correct: { box: "bg-success-3 text-success-11 border-success-9", mark: "✓", label: "correct" },
+  wrong: { box: "bg-error-3 text-error-11 border-error-9 underline decoration-wavy decoration-error-9 underline-offset-4", mark: "✗", label: "wrong letter" },
+  extra: { box: "bg-warning-3 text-warning-11 border-warning-9 line-through decoration-2", mark: "+", label: "extra letter" },
+  missing: { box: "bg-info-3 text-info-11 border-info-9 border-dashed underline decoration-dotted decoration-2 underline-offset-4", mark: "^", label: "missing letter" },
 };
 
 const show = (c: string) => (c === " " ? "␣" : c);
@@ -40,19 +40,19 @@ export default function DiffView({ ops }: { ops: DiffOp[] }) {
           const s = STYLE[op.type];
           return (
             <li key={i} className="flex flex-col items-center" aria-label={describe(op)}>
-              <span className={`grid h-11 min-w-[2rem] place-items-center rounded-lg px-1 ring-1 ${s.box}`}>{show(op.char)}</span>
-              <span className="mt-0.5 h-4 text-xs font-sans leading-4 text-slate-600" aria-hidden>
+              <span className={`grid h-11 min-w-[2rem] place-items-center rounded-sm border px-1 ${s.box}`}>{show(op.char)}</span>
+              <span className="mt-0.5 h-4 text-xs font-body leading-4 text-text-secondary" aria-hidden>
                 {op.type === "wrong" ? `→${op.expected}` : op.type === "correct" ? "" : s.mark}
               </span>
             </li>
           );
         })}
       </ol>
-      <p className="mt-2 text-sm text-slate-700">{summarize(ops)}</p>
-      <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600" aria-label="Legend">
+      <p className="mt-2 text-sm text-text-secondary">{summarize(ops)}</p>
+      <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary" aria-label="Legend">
         {(["correct", "wrong", "extra", "missing"] as DiffType[]).map((t) => (
           <li key={t} className="flex items-center gap-1.5">
-            <span className={`grid h-5 w-5 place-items-center rounded font-mono ring-1 ${STYLE[t].box}`}>a</span>
+            <span className={`grid h-5 w-5 place-items-center rounded-sm border font-mono ${STYLE[t].box}`}>a</span>
             <span aria-hidden>{STYLE[t].mark}</span> {t === "wrong" ? "wrong (→ should be)" : t === "extra" ? "extra — remove" : t === "missing" ? "missing — add" : "correct"}
           </li>
         ))}

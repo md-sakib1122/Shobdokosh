@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { speak } from "../lib/speech";
+import { IconSpeaker } from "./Icons";
 
 interface Props {
   word: string;
@@ -18,16 +19,16 @@ export default function SpeakButton({ word, audioUrl, autoPlay = false, size = "
     }
   }, [autoPlay, word, audioUrl]);
 
-  const dims = size === "lg" ? "h-16 w-16 text-3xl" : "h-11 w-11 text-xl";
+  const big = size === "lg";
   return (
     <button
       type="button"
-      className={`btn shrink-0 rounded-full border border-teal-200 bg-teal-50 px-0 text-teal-800 hover:bg-teal-100 ${dims} ${className}`}
+      className={`btn-icon ${big ? "h-14 w-14 border border-border-interactive" : ""} ${className}`}
       onClick={() => void speak(word, audioUrl)}
-      aria-label="Play pronunciation"
-      title="Play pronunciation"
+      aria-label="Hear pronunciation"
+      title="Hear pronunciation"
     >
-      <span aria-hidden>🔊</span>
+      <IconSpeaker className={big ? "h-7 w-7" : "h-5 w-5"} />
     </button>
   );
 }

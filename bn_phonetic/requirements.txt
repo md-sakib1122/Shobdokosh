@@ -1,4 +1,0 @@
-pronouncing>=0.2
-numpy>=1.22
-# dev / tests
-pytest>=7
