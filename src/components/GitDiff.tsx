@@ -9,8 +9,8 @@ import { summarize } from "./DiffView";
 const show = (c: string) => (c === " " ? "␣" : c);
 
 function Line({ sign, children, tone }: { sign: string; children: ReactNode; tone: "del" | "add" }) {
-  const row = tone === "del" ? "bg-rose-50 text-rose-950" : "bg-emerald-50 text-emerald-950";
-  const gutter = tone === "del" ? "bg-rose-100 text-rose-600" : "bg-emerald-100 text-emerald-700";
+  const row = tone === "del" ? "bg-error-3 text-text" : "bg-success-3 text-text";
+  const gutter = tone === "del" ? "text-error-11" : "text-success-11";
   return (
     <div className={`flex ${row}`}>
       <span className={`w-9 shrink-0 select-none py-2 text-center font-semibold ${gutter}`} aria-hidden>{sign}</span>
@@ -22,10 +22,10 @@ function Line({ sign, children, tone }: { sign: string; children: ReactNode; ton
 export default function GitDiff({ ops }: { ops: DiffOp[] }) {
   return (
     <div>
-      <div className="overflow-hidden rounded-xl border border-slate-200 font-mono text-xl leading-relaxed" aria-label="Spelling diff" role="group">
-        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 py-1.5 font-sans text-xs text-slate-500">
+      <div className="overflow-hidden rounded-md border border-border-subtle font-mono text-xl leading-relaxed" aria-label="Spelling diff" role="group">
+        <div className="flex items-center justify-between border-b border-border-subtle bg-surface px-3 py-1.5 font-body text-xs text-text-secondary">
           <span>your answer → correct spelling</span>
-          <span aria-hidden><span className="text-rose-600">−</span> / <span className="text-emerald-700">+</span></span>
+          <span aria-hidden><span className="text-error-11">−</span> / <span className="text-success-11">+</span></span>
         </div>
         <Line sign="−" tone="del">
           <span className="sr-only">Your answer: </span>
@@ -33,7 +33,7 @@ export default function GitDiff({ ops }: { ops: DiffOp[] }) {
             o.type === "correct" ? <span key={i}>{show(o.char)}</span> : (
               <mark
                 key={i}
-                className="rounded-sm bg-rose-300/70 text-rose-950"
+                className="bg-transparent font-semibold text-error-11 underline decoration-error-9 decoration-2 underline-offset-4"
                 aria-label={o.type === "wrong" ? `${o.char} should be ${o.expected}` : `extra ${o.char}`}
               >
                 {show(o.char)}
@@ -47,7 +47,7 @@ export default function GitDiff({ ops }: { ops: DiffOp[] }) {
             return o.type === "correct" ? <span key={i}>{show(c)}</span> : (
               <mark
                 key={i}
-                className="rounded-sm bg-emerald-300/70 text-emerald-950"
+                className="bg-transparent font-semibold text-success-11 underline decoration-success-9 decoration-2 underline-offset-4"
                 aria-label={o.type === "missing" ? `missing ${c}` : `${c} instead of ${o.char}`}
               >
                 {show(c)}
@@ -56,7 +56,7 @@ export default function GitDiff({ ops }: { ops: DiffOp[] }) {
           })}
         </Line>
       </div>
-      <p className="mt-2 text-sm text-slate-600">{summarize(ops)}</p>
+      <p className="mt-2 text-sm text-text-secondary">{summarize(ops)}</p>
     </div>
   );
 }

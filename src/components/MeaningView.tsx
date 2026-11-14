@@ -8,17 +8,17 @@ export default function MeaningView({ bn, lemma }: { bn: string; lemma?: string 
   const shown = all ? items : items.slice(0, 5);
   return (
     <div>
-      {lemma && <p className="mb-1 text-xs text-slate-500">meaning of <em className="font-medium">{lemma}</em></p>}
-      <ul className="flex flex-wrap gap-1.5" lang="bn">
+      {lemma && <p className="mb-1 text-xs text-text-secondary">meaning of <em className="font-medium">{lemma}</em></p>}
+      <ul className="flex flex-wrap gap-x-1.5 gap-y-1" lang="bn">
         {shown.map((m, i) => (
-          <li key={i} className="bn inline-flex items-center gap-1 rounded-lg bg-slate-50 px-2 py-1 text-base ring-1 ring-slate-200">
+          <li key={i} className="bn inline-flex items-center gap-1 rounded-sm bg-surface-hover px-2 py-0.5 text-base">
             {m.text}
-            {m.tag && <span className="chip font-sans" lang="en">{m.tag}</span>}
+            {m.tag && <span className="font-body text-xs text-text-secondary" lang="en">{m.tag}</span>}
           </li>
         ))}
       </ul>
       {items.length > 5 && (
-        <button type="button" className="mt-1 min-h-[44px] text-sm font-medium text-teal-700 underline-offset-2 hover:underline" onClick={() => setAll(!all)}>
+        <button type="button" className="btn-link mt-1" onClick={() => setAll(!all)}>
           {all ? "less" : `more (${items.length - 5})`}
         </button>
       )}

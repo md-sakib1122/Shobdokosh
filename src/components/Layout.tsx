@@ -1,20 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, type ComponentType, type SVGProps } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAccount, useDB } from "../state/DBContext";
 import { useResources, warmResources } from "../state/resources";
+import { IconAdd, IconCategories, IconPractice, IconSettings, IconWarning, IconWords, LogoMark } from "./Icons";
 
-function Badge({ n }: { n: number }) {
+interface Item {
+  to: string;
+  label: string;
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  count?: number;
+  countLabel?: (n: number) => string;
+}
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+export function Wordmark({ className = "text-xl" }: { className?: string }) {
   return (
-    <span className="ml-1.5 inline-flex min-w-[1.5rem] justify-center rounded-full bg-black/10 px-1.5 text-xs font-semibold tabular-nums">
-      {n}
+    <span className={`display text-text ${className}`}>
+      <span className="font-medium">Shobdo</span><span className="font-normal">Practice</span>
     </span>
   );
 }
-
-const tab = ({ isActive }: { isActive: boolean }) =>
-  `flex min-h-[44px] flex-1 items-center justify-center rounded-xl px-2 text-sm font-medium transition sm:flex-none sm:px-4 ${
-    isActive ? "bg-teal-700 text-white" : "text-slate-700 hover:bg-slate-100"
-  }`;
 
 export default function Layout() {
   const account = useAccount();
@@ -24,41 +30,77 @@ export default function Layout() {
   useEffect(warmResources, []);
 
   const practice = account.words.filter((w) => w.status === "practice").length;
-  const all = account.words.length - practice;
+  const learned = account.words.length - practice;
   const loading = res.phonetic === "loading" || res.meanings === "loading";
 
+  const items: Item[] = [
+    { to: "/practice", label: "Practice", Icon: IconPractice, count: practice, countLabel: (n) => `${plural(n, "word", "words")} in practice` },
+    { to: "/words", label: "Words", Icon: IconWords, count: learned, countLabel: (n) => plural(n, "word", "words") },
+    { to: "/add", label: "Add", Icon: IconAdd },
+    { to: "/categories", label: "Categories", Icon: IconCategories },
+    { to: "/settings", label: "Settings", Icon: IconSettings },
+  ];
+
   return (
-    <div className="min-h-screen pb-16">
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 pt-3">
-          <NavLink to="/practice" className="flex items-center gap-2 font-bold text-teal-800">
-            <span className="bn grid h-9 w-9 place-items-center rounded-xl bg-teal-700 text-lg text-white" aria-hidden>শ</span>
-            <span className="text-lg">ShobdoPractice</span>
+    <div className="min-h-screen pb-24 md:pb-12">
+      <header className="sticky top-0 z-30 border-b border-border bg-background">
+        <div className="mx-auto flex h-14 max-w-content items-center gap-6 px-4 md:h-16 md:px-8">
+          <NavLink to="/practice" className="flex min-h-control shrink-0 items-center gap-2 rounded" aria-label="ShobdoPractice – Practice">
+            <LogoMark className="h-7 w-7" />
+            <Wordmark />
           </NavLink>
-          <div className="ml-auto flex min-w-0 items-center gap-2">
-            <span className="hidden truncate text-sm text-slate-500 sm:inline" title={account.email}>{account.email}</span>
-            <button className="btn-secondary whitespace-nowrap px-3" onClick={() => { logout(); navigate("/login"); }}>
+
+          <nav aria-label="Main" className="nav-bar">
+            {items.map(({ to, label, Icon, count, countLabel }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className="nav-item"
+              >
+                {({ isActive }) => (
+                  <>
+                    <span className="relative">
+                      <Icon className="h-6 w-6 md:h-5 md:w-5" strokeWidth={isActive ? 2 : 1.5} />
+                      {count !== undefined && count > 0 && (
+                        <span className="badge absolute -right-3 -top-1.5 md:hidden" aria-hidden>{count}</span>
+                      )}
+                    </span>
+                    <span>{label}</span>
+                    {count !== undefined && (
+                      <>
+                        <span className="badge hidden md:inline-flex" aria-hidden>{count}</span>
+                        <span className="sr-only">, {countLabel!(count)}</span>
+                      </>
+                    )}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="ml-auto hidden shrink-0 items-center md:flex">
+            <button
+              className="btn-ghost whitespace-nowrap"
+              title={`Signed in as ${account.email}`}
+              onClick={() => { logout(); navigate("/login"); }}
+            >
               Switch account
             </button>
           </div>
         </div>
-        <p className="mx-auto max-w-5xl truncate px-4 pt-1 text-xs text-slate-500 sm:hidden">{account.email}</p>
-        <nav className="mx-auto flex max-w-5xl gap-1 px-4 py-2" aria-label="Main">
-          <NavLink to="/practice" className={tab}>Practice<Badge n={practice} /></NavLink>
-          <NavLink to="/all" className={tab}>All Words<Badge n={all} /></NavLink>
-          <NavLink to="/add" className={tab}>Add</NavLink>
-          <NavLink to="/settings" className={tab} aria-label="Settings">
-            <span className="sm:hidden" aria-hidden>⚙️</span><span className="hidden sm:inline">Settings</span>
-          </NavLink>
-        </nav>
-        {loading && <div className="h-0.5 w-full animate-pulse bg-teal-500/60" role="progressbar" aria-label="Loading dictionaries" />}
+        {loading && <div className="h-0.5 w-full bg-accent-solid opacity-40" role="progressbar" aria-label="Loading dictionaries" />}
       </header>
+
       {!persistent && (
-        <div role="alert" className="bg-amber-100 px-4 py-2 text-center text-sm text-amber-900">
-          Storage is unavailable in this browser — your changes are kept in memory only and will be lost when you close the tab. Export them from Settings.
+        <div className="mx-auto mt-4 max-w-content px-4 md:px-8">
+          <p role="alert" className="note-warning">
+            <IconWarning className="mt-0.5 h-4 w-4 shrink-0" />
+            This browser isn't saving data right now. Changes are kept only until you close this tab. Export your words from Settings to keep a copy.
+          </p>
         </div>
       )}
-      <main className="mx-auto max-w-5xl px-4 py-5">
+
+      <main className="mx-auto max-w-content px-4 pt-6 md:px-8 md:pt-10">
         <Outlet />
       </main>
     </div>

@@ -2,7 +2,8 @@ import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import { ToastProvider } from "./components/Toast";
 import AddWord from "./pages/AddWord";
-import AllWords from "./pages/AllWords";
+import Categories from "./pages/Categories";
+import Words from "./pages/Words";
 import Login from "./pages/Login";
 import Practice from "./pages/Practice";
 import Settings from "./pages/Settings";
@@ -27,7 +28,9 @@ export default function App() {
             <Route path="/login" element={<LoginRoute />} />
             <Route element={<Guarded />}>
               <Route path="/practice" element={<Practice />} />
-              <Route path="/all" element={<AllWords />} />
+              <Route path="/words" element={<Words />} />
+              <Route path="/all" element={<Navigate to="/words" replace />} />
+              <Route path="/categories" element={<Categories />} />
               <Route path="/add" element={<AddWord />} />
               <Route path="/settings" element={<Settings />} />
             </Route>

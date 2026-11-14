@@ -1,13 +1,18 @@
 import { useRef, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import CategoryCombobox from "../components/CategoryCombobox";
+import { IconWarning } from "../components/Icons";
 import MeaningView from "../components/MeaningView";
 import SpeakButton from "../components/SpeakButton";
 import { useToast } from "../components/Toast";
 import type { DefinitionStatus } from "../lib/storage";
 import { startLookups } from "../lib/lookup";
-import { addWord, createWord, findDuplicate, type Word } from "../lib/storage";
+import {
+  addWord, createCategory, createWord, findDuplicate, resolveAddCategory, setPrefs, type Word,
+} from "../lib/storage";
 import { useAccount, useDB } from "../state/DBContext";
 import { useResources } from "../state/resources";
+import { useCategories } from "../state/useCategories";
 
 const MAX_LEN = 60;
 
@@ -67,6 +72,27 @@ export default function AddWord() {
   const [preview, setPreview] = useState<Preview | null>(null);
   const runRef = useRef(0);
   const wordRef = useRef<HTMLInputElement>(null);
+  const [params] = useSearchParams();
+  const cats = useCategories();
+  // Pre-filled, never empty: ?category=, else the last one used, else Uncategorized (JOURNEY F1).
+  const [categoryId, setCategoryId] = useState(() => resolveAddCategory(account, params.get("category")));
+  const category = cats.of(categoryId);
+
+  const createInline = (name: string): string | null => {
+    try {
+      let made = "";
+      update((db) => {
+        const r = createCategory(db, account.email, name);
+        made = r.category.id;
+        return r.db;
+      });
+      setCategoryId(made);
+      toast(`Category “${name.trim().replace(/\s+/g, " ")}” created.`, "success");
+      return null;
+    } catch (e) {
+      return (e as Error).message;
+    }
+  };
 
   const patch = (run: number, p: Partial<Preview>) =>
     setPreview((cur) => (cur && cur.run === run ? { ...cur, ...p } : cur));
@@ -83,7 +109,7 @@ export default function AddWord() {
     const existing = findDuplicate(account.words, w);
     if (existing) {
       setDup(existing);
-      setError("You already have this word.");
+      setError(`“${existing.word}” is already in ${existing.status === "practice" ? "Practice" : "Words"}.`);
       return;
     }
     setError(null);
@@ -134,9 +160,13 @@ export default function AddWord() {
       partOfSpeech: orNull(preview.partOfSpeech),
       audioUrl: preview.audioUrl,
       sentence: orNull(preview.sentence),
+      categoryId: category.id,
     });
-    update((db) => addWord(db, account.email, w));
-    toast(<span>Saved “{w.word}” to Practice. <Link className="underline" to="/practice">Practise now</Link></span>, "success");
+    update((db) => setPrefs(addWord(db, account.email, w), account.email, { lastAddCategory: category.id }));
+    toast(
+      <span>“{w.word}” added to {category.name}. <Link className="font-semibold text-accent-text underline underline-offset-4" to="/practice">Practice</Link></span>,
+      "success",
+    );
     runRef.current++;
     setPreview(null);
     setWord("");
@@ -147,12 +177,12 @@ export default function AddWord() {
   const firstLoad = res.phonetic !== "ready" || res.meanings !== "ready";
 
   return (
-    <div className="mx-auto max-w-xl space-y-5">
-      <h1 className="text-2xl font-bold">Add a word</h1>
+    <div className="page max-w-[44rem] space-y-6">
+      <h1 className="page-title">Add a word</h1>
 
-      <form className="card space-y-4 p-5" onSubmit={lookUp} noValidate>
+      <form className="panel max-w-none space-y-4" onSubmit={lookUp} noValidate>
         <div>
-          <label htmlFor="word" className="label">English word or short phrase</label>
+          <label htmlFor="word" className="label">English word</label>
           <input
             id="word" ref={wordRef} className="input text-lg" autoFocus autoComplete="off" autoCapitalize="none"
             spellCheck={false} maxLength={80} placeholder="e.g. necessary" value={word}
@@ -160,32 +190,35 @@ export default function AddWord() {
             onChange={(e) => { setWord(e.target.value); setError(null); setDup(null); }}
           />
           {error && (
-            <p id="word-error" className="mt-2 text-sm text-rose-700" role="alert">
-              {error}{" "}
-              {dup && (
-                <Link className="font-medium underline" to={`/${dup.status === "practice" ? "practice" : "all"}?open=${dup.id}`}>
-                  Open “{dup.word}” in {dup.status === "practice" ? "Practice" : "All Words"}
-                </Link>
-              )}
+            <p id="word-error" className="field-error" role="alert">
+              <IconWarning className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>
+                {error}{" "}
+                {dup && (
+                  <Link className="font-semibold text-accent-text underline underline-offset-4" to={`/${dup.status === "practice" ? "practice" : "words"}?open=${dup.id}`}>
+                    Open {dup.word}
+                  </Link>
+                )}
+              </span>
             </p>
           )}
         </div>
         {!preview && (
           <div>
-            <label htmlFor="sentence" className="label">Example sentence <span className="font-normal text-slate-500">(optional)</span></label>
+            <label htmlFor="sentence" className="label">Example sentence <span className="font-normal text-text-secondary">(optional)</span></label>
             <textarea id="sentence" className="input" rows={2} value={sentence} onChange={(e) => setSentence(e.target.value)} />
           </div>
         )}
         <button type="submit" className="btn-primary w-full sm:w-auto">{preview ? "Look up again" : "Look up"}</button>
         {firstLoad && !preview && (
-          <p className="text-xs text-slate-500">Loading the pronunciation and meaning dictionaries… you can start typing.</p>
+          <p className="text-sm text-text-secondary">Loading the pronunciation and meaning dictionaries… you can start typing.</p>
         )}
       </form>
 
       {preview && (
-        <section className="card space-y-4 p-5" aria-label="Preview" aria-busy={preview.pronLoading || preview.meaningLoading || preview.defLoading}>
+        <section className="panel max-w-none space-y-5" aria-label="Preview" aria-busy={preview.pronLoading || preview.meaningLoading || preview.defLoading}>
           <div className="flex items-center gap-3">
-            <h2 className="min-w-0 flex-1 break-words text-2xl font-bold">{preview.word}</h2>
+            <h2 className="display min-w-0 flex-1 break-words text-2xl font-medium md:text-3xl">{preview.word}</h2>
             <SpeakButton word={preview.word} audioUrl={preview.audioUrl} />
           </div>
 
@@ -201,12 +234,12 @@ export default function AddWord() {
             {preview.pronLoading ? <Skeleton big /> : (
               <>
                 <input
-                  id="p-pron" lang="bn" className="input bn text-3xl font-semibold" value={preview.bnPronunciation}
+                  id="p-pron" lang="bn" className="input bn text-2xl font-medium" value={preview.bnPronunciation}
                   onChange={(e) => patch(preview.run, { bnPronunciation: e.target.value, pronEdited: true })}
                 />
-                {!preview.bnPronunciation && <p className="mt-1 text-xs text-rose-700">Lookup failed — you can type it, or use “Retry lookup” later.</p>}
+                {!preview.bnPronunciation && <p className="field-error"><IconWarning className="mt-0.5 h-4 w-4 shrink-0" />We couldn't look this up. Type it yourself, or use “Retry lookup” later.</p>}
                 {!preview.pronReliable && !preview.pronEdited && (
-                  <p className="mt-1 text-xs text-amber-700">? This spelling is a guess (word not in the pronunciation dictionary) — check it.</p>
+                  <p className="hint text-warning-11">This spelling is a guess (the word isn't in the pronunciation dictionary) – check it.</p>
                 )}
               </>
             )}
@@ -236,8 +269,8 @@ export default function AddWord() {
                     onChange={(e) => patch(preview.run, { definition: e.target.value })}
                   />
                   {!preview.definition && (
-                    <p className="mt-1 text-xs text-slate-500">
-                      {preview.definitionStatus === "notfound" ? "No definition found." : "Couldn't reach the dictionary — saved words get a “Retry lookup” button."}
+                    <p className="hint">
+                      {preview.definitionStatus === "notfound" ? "No definition found." : "Couldn't reach the dictionary – saved words get a “Retry lookup” button."}
                     </p>
                   )}
                 </>
@@ -253,7 +286,7 @@ export default function AddWord() {
 
           <div>
             <label htmlFor="p-sent" className="label">
-              Example sentence {preview.sentenceSuggested && <span className="chip ml-1 bg-amber-100 text-amber-800">suggested</span>}
+              Example sentence {preview.sentenceSuggested && <span className="chip ml-1">suggested</span>}
             </label>
             <div className="flex gap-2">
               <textarea
@@ -268,7 +301,20 @@ export default function AddWord() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+          <div className="divider pt-5">
+            <CategoryCombobox
+              label="Category"
+              categories={cats.categories}
+              counts={cats.counts}
+              value={category.id}
+              onChange={setCategoryId}
+              onCreate={createInline}
+              pinnedId={account.prefs.lastAddCategory ?? undefined}
+            />
+            <p className="hint">Each word goes in one category.</p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
             <button type="button" className="btn-primary flex-1 sm:flex-none" onClick={save}>Save to Practice</button>
             <button type="button" className="btn-ghost" onClick={() => { runRef.current++; setPreview(null); }}>Cancel</button>
           </div>

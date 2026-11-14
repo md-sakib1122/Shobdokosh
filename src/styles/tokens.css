@@ -1,4 +1,35 @@
-/* GENERATED from DESIGN.md fenced token blocks (palette + overrides). Dark emitted twice: OS-driven and forced. */
+/* Design tokens — generated from DESIGN.md ("Ruled Ink", locked 2026-11-13).
+   Do not edit values here: change DESIGN.md first, then regenerate. */
+
+:root {
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-body: "Anek Latin", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-bn: "Anek Bangla", "Noto Sans Bengali", "Hind Siliguri", "Nirmala UI", "Vrinda", "Kohinoor Bangla", "Bangla Sangam MN", sans-serif;
+  --text-xs: 0.75rem;   --leading-xs: 1rem;
+  --text-sm: 0.875rem;  --leading-sm: 1.25rem;
+  --text-base: 1rem;    --leading-base: 1.5rem;
+  --text-lg: 1.125rem;  --leading-lg: 1.75rem;
+  --text-xl: 1.25rem;   --leading-xl: 1.75rem;
+  --text-2xl: 1.5rem;   --leading-2xl: 2rem;
+  --text-3xl: 1.875rem; --leading-3xl: 2.25rem;
+  --text-4xl: 2.25rem;  --leading-4xl: 2.5rem;
+  --leading-bn: 1.6;
+  --leading-display: 1.2;
+}
+
+:root {
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px; --space-5: 20px;
+  --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+  --radius-sm: 4px; --radius-md: 6px; --radius-lg: 10px; --radius-badge: 9px;
+  --duration-micro: 120ms; --duration-standard: 180ms; --duration-large: 260ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1); --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --control-h: 2.75rem;      /* 44px: every interactive element */
+  --content-max: 1040px;
+  --ring-width: 2px; --ring-offset: 2px;
+  color-scheme: light;
+}
+
+/* palette.mjs --seed 277.78 --chroma muted --harmony mono (verbatim) */
 :root {
   --neutral-1: #fcfdfd;
   --neutral-2: #f8f9fa;
@@ -50,16 +81,22 @@
   --accent-solid: var(--accent-9);
   --accent-solid-hover: var(--accent-10);
   --accent-text: var(--accent-11);
+}
+
+/* project semantic overrides */
+:root {
   --rule: var(--accent-7);                 /* the margin rule; decorative, no contrast duty */
   --border-interactive: var(--neutral-9);  /* field/boundary borders that must meet 3:1: 5.94:1 vs background */
   --focus-ring: var(--accent-9);           /* 2px ring, 2px offset: 6.12:1 vs background */
   --shadow-color: 40 43 69;                /* accent-12 as RGB triplet; shadows are hue-shifted, never black */
   --shadow-dialog: 0 12px 32px -12px rgb(var(--shadow-color) / 0.28);
   --shadow-toast:  0 6px 20px -8px rgb(var(--shadow-color) / 0.24);
-  color-scheme: light dark;
 }
+
+/* dark: follows the OS unless light is forced … */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --neutral-1: #121313;
     --neutral-2: #19191a;
     --neutral-3: #222224;
@@ -120,8 +157,10 @@
     --shadow-toast:  0 6px 20px -8px rgb(var(--shadow-color) / 0.55);
   }
 }
-:root[data-theme="light"] { color-scheme: light; }
-[data-theme="dark"] {
+
+/* … and can be forced with data-theme="dark" */
+:root[data-theme="dark"] {
+  color-scheme: dark;
   --neutral-1: #121313;
   --neutral-2: #19191a;
   --neutral-3: #222224;
@@ -180,16 +219,4 @@
   --shadow-color: 8 8 16;
   --shadow-dialog: 0 12px 32px -12px rgb(var(--shadow-color) / 0.6);
   --shadow-toast:  0 6px 20px -8px rgb(var(--shadow-color) / 0.55);
-  color-scheme: dark;
-}
-
-:root {
-  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px; --space-5: 20px;
-  --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
-  --radius-sm: 4px; --radius-md: 6px; --radius-lg: 10px; --radius-badge: 9px;
-  --duration-micro: 120ms; --duration-standard: 180ms; --duration-large: 260ms;
-  --ease-out: cubic-bezier(0.2, 0, 0, 1); --ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --control-h: 2.75rem;      /* 44px: every interactive element */
-  --content-max: 1040px;
-  --ring-width: 2px; --ring-offset: 2px;
 }

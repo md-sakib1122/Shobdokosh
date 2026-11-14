@@ -4,6 +4,7 @@ import type { Word } from "../lib/storage";
 import GitDiff from "./GitDiff";
 import MeaningView from "./MeaningView";
 import SpeakButton from "./SpeakButton";
+import { IconAlert, IconCheck, IconClose } from "./Icons";
 
 type Extra = "meaning" | "definition" | "sentence";
 
@@ -39,30 +40,29 @@ export default function VerifyDialog({ word, ok, ops, onClose, onMove }: Props) 
       ref={ref}
       onClose={onClose}
       onClick={(e) => { if (e.target === ref.current) close(); }}
-      className="w-[calc(100%-2rem)] max-w-lg rounded-2xl p-0 shadow-2xl backdrop:bg-slate-900/50"
+      className="dialog max-w-[32rem]"
       aria-labelledby={titleId}
     >
-      <div className={`h-1.5 ${ok ? "bg-emerald-500" : "bg-rose-500"}`} aria-hidden />
-      <div className="max-h-[85vh] overflow-y-auto p-5">
-        <div className="mb-4 flex items-start gap-3">
-          <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-full text-xl font-bold ${ok ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"}`} aria-hidden>
-            {ok ? "✓" : "✗"}
+      <div className="max-h-[85vh] overflow-y-auto p-6">
+        <div className="mb-5 flex items-start gap-3">
+          <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${ok ? "bg-success-3 text-success-11" : "bg-error-3 text-error-11"}`} aria-hidden>
+            {ok ? <IconCheck /> : <IconAlert />}
           </div>
           <div className="min-w-0 flex-1">
-            <h2 id={titleId} className={`text-lg font-semibold ${ok ? "text-emerald-800" : "text-rose-800"}`}>
+            <h2 id={titleId} className="text-xl font-medium">
               {ok ? "Correct" : "Not quite"}
             </h2>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-text-secondary">
               {ok ? "You spelled it right." : "Compare your spelling with the correct one."}
             </p>
           </div>
-          <button className="btn-icon text-slate-500 hover:bg-slate-100" onClick={close} aria-label="Close">✕</button>
+          <button className="btn-icon -mr-2" onClick={close} aria-label="Close"><IconClose /></button>
         </div>
 
-        <div className="mb-4 flex items-center gap-3 rounded-xl bg-slate-50 p-3">
+        <div className="mb-5 flex items-center gap-3 border-l border-rule pl-5">
           <div className="min-w-0 flex-1">
-            <p className="break-words text-2xl font-bold tracking-wide text-slate-900">{word.word}</p>
-            {word.bnPronunciation && <p className="bn text-lg text-teal-800" lang="bn">{word.bnPronunciation}</p>}
+            <p className="display break-words text-3xl font-medium text-text">{word.word}</p>
+            {word.bnPronunciation && <p className="bn text-lg text-text-secondary" lang="bn">{word.bnPronunciation}</p>}
           </div>
           <SpeakButton word={word.word} audioUrl={word.audioUrl} />
         </div>
@@ -70,12 +70,12 @@ export default function VerifyDialog({ word, ok, ops, onClose, onMove }: Props) 
         {!ok && <GitDiff ops={ops} />}
 
         <section className="mt-5">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Learn more</h3>
+          <h3 className="section-title mb-2">Learn more</h3>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Learn more">
             {extras.map((x) => (
               <button
                 key={x.id} type="button" disabled={!x.available}
-                className={`btn px-3 ${open === x.id ? "bg-teal-700 text-white hover:bg-teal-800" : "border border-slate-300 bg-white text-slate-800 hover:bg-slate-100"}`}
+                className={open === x.id ? "btn-secondary border-accent-solid bg-accent-bg-subtle text-accent-text hover:bg-accent-bg-subtle" : "btn-secondary"}
                 aria-expanded={open === x.id} aria-controls={`verify-${x.id}`}
                 title={x.available ? undefined : "Not available for this word"}
                 onClick={() => setOpen(open === x.id ? null : x.id)}
@@ -86,28 +86,29 @@ export default function VerifyDialog({ word, ok, ops, onClose, onMove }: Props) 
           </div>
           <div className="mt-3">
             {open === "meaning" && word.bnMeaning && (
-              <div id="verify-meaning" className="rounded-xl border border-slate-200 p-3"><MeaningView bn={word.bnMeaning} lemma={word.meaningLemma} /></div>
+              <div id="verify-meaning" className="divider pt-3"><MeaningView bn={word.bnMeaning} lemma={word.meaningLemma} /></div>
             )}
             {open === "definition" && word.definition && (
-              <p id="verify-definition" className="rounded-xl border border-slate-200 p-3">
+              <p id="verify-definition" className="divider pt-3">
                 {word.partOfSpeech && <span className="chip mr-2">{word.partOfSpeech}</span>}
                 {word.definition}
               </p>
             )}
             {open === "sentence" && word.sentence && (
-              <p id="verify-sentence" className="rounded-xl border border-slate-200 p-3 italic">“{word.sentence}”</p>
+              <p id="verify-sentence" className="divider display pt-3 text-lg">“{word.sentence}”</p>
             )}
           </div>
         </section>
 
         {onMove && (
-          <div className="mt-5 flex flex-wrap items-center gap-2 rounded-xl border border-teal-200 bg-teal-50 p-3" role="status">
-            <p className="flex-1 text-sm text-teal-900">🎉 Looks learned — move to All Words?</p>
+          <div className="note-success mt-5 items-center" role="status">
+            <IconCheck className="h-4 w-4 shrink-0" />
+            <p className="flex-1">Looks learned – move to Words?</p>
             <button type="button" className="btn-primary" onClick={() => { onMove(); close(); }}>Move</button>
           </div>
         )}
 
-        <div className="mt-5 flex justify-end gap-2 border-t border-slate-100 pt-4">
+        <div className="divider mt-6 flex justify-end gap-2 pt-4">
           {ok ? (
             <button type="button" className="btn-primary" onClick={close} autoFocus>Done</button>
           ) : (

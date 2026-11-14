@@ -52,13 +52,13 @@ async function login(email: string) {
   const input = await screen.findByLabelText("Email");
   fireEvent.change(input, { target: { value: email } });
   fireEvent.submit(input.closest("form")!);
-  await screen.findByRole("heading", { name: /practice/i });
+  await screen.findByRole("heading", { level: 1, name: /^Practice/ });
 }
 
 const nav = (name: RegExp) => fireEvent.click(within(screen.getByRole("navigation", { name: "Main" })).getByRole("link", { name }));
 
 async function answer(text: string) {
-  const input = await screen.findByLabelText("Type the English spelling");
+  const input = await screen.findByLabelText("Spell the word");
   fireEvent.change(input, { target: { value: text } });
   fireEvent.submit(input.closest("form")!);
 }
@@ -66,13 +66,13 @@ async function answer(text: string) {
 describe("walkthroughs", () => {
   test("login, add, practise with diff, learn, move, switch accounts, offline add", async () => {
     render(<App />);
-    expect(screen.getByText(/No password — anyone on this device can open any account/)).toBeTruthy();
+    expect(screen.getByText(/anyone using this browser can open any account/)).toBeTruthy();
 
     // 1. log in as a@test.com → add "necessary"
     await login("A@Test.com ");
-    expect(screen.getByText("No words in practice")).toBeTruthy();
+    expect(screen.getByText("No words to practice")).toBeTruthy();
     nav(/^Add$/);
-    fireEvent.change(await screen.findByLabelText("English word or short phrase"), { target: { value: "necessary" } });
+    fireEvent.change(await screen.findByLabelText("English word"), { target: { value: "necessary" } });
     fireEvent.click(screen.getByRole("button", { name: "Look up" }));
     await waitFor(() => expect((screen.getByLabelText(/Bangla pronunciation/) as HTMLInputElement).value).toBe("নেসেসারি"), LONG);
     await waitFor(() => expect((screen.getByLabelText("Bangla meaning") as HTMLTextAreaElement).value).toMatch(/আবশ্যক/), LONG);
@@ -80,12 +80,13 @@ describe("walkthroughs", () => {
     expect((screen.getByLabelText(/Example sentence/) as HTMLTextAreaElement).value).toBe("It is necessary to sleep.");
     expect(screen.getByText("suggested")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Save to Practice" }));
-    await screen.findByText(/Saved “necessary” to Practice/);
+    await screen.findByText(/“necessary” added to Uncategorized/);
 
     // duplicate is blocked with a link to the existing word
-    fireEvent.change(screen.getByLabelText("English word or short phrase"), { target: { value: " NECESSARY " } });
+    fireEvent.change(screen.getByLabelText("English word"), { target: { value: " NECESSARY " } });
     fireEvent.click(screen.getByRole("button", { name: "Look up" }));
-    expect(await screen.findByRole("link", { name: /Open “necessary” in Practice/ })).toBeTruthy();
+    expect(await screen.findByText(/“necessary” is already in Practice/)).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Open necessary" })).toBeTruthy();
 
     // 2. it appears in Practice; practise with a misspelling → diff
     nav(/^Practice/);
@@ -108,18 +109,18 @@ describe("walkthroughs", () => {
         await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
       }
     }
-    expect(screen.getByText(/Looks learned — move to All Words\?/)).toBeTruthy();
+    expect(screen.getByText(/Looks learned – move to Words\?/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Move" }));
-    await screen.findByText(/moved to All Words/);
+    await screen.findByText(/moved to Words/);
 
-    // 3. All Words: Bangla only, word hidden; 🔊 works (no voice in jsdom → toast); move back
-    nav(/^All Words/);
+    // 3. Words: Bangla only, word hidden; speaker works (no voice in jsdom → toast); move back
+    nav(/^Words/);
     const card = (await screen.findByText("নেসেসারি")).closest("article")!;
     expect(within(card).queryByText("necessary")).toBeNull();
-    fireEvent.click(within(card).getByRole("button", { name: "Play pronunciation" }));
-    await screen.findByText(/🔇/);
+    fireEvent.click(within(card).getByRole("button", { name: "Hear pronunciation" }));
+    await screen.findByText(/Speech isn't available|No English voice|Couldn't play/);
     // verify on the card: wrong → GitHub-style diff + meaning in the modal
-    const spell = within(card).getByLabelText("Type the English spelling");
+    const spell = within(card).getByLabelText("Spell the word");
     fireEvent.change(spell, { target: { value: "neccesary" } });
     fireEvent.click(within(card).getByRole("button", { name: "Verify" }));
     let result = await screen.findByRole("dialog");
@@ -146,7 +147,7 @@ describe("walkthroughs", () => {
     // 4. switch to b@test.com → empty → back to a@test.com → data intact
     fireEvent.click(screen.getByRole("button", { name: "Switch account" }));
     await login("b@test.com");
-    expect(screen.getByText("No words in practice")).toBeTruthy();
+    expect(screen.getByText("No words to practice")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Switch account" }));
     await login("a@test.com");
     expect(await screen.findByText("নেসেসারি")).toBeTruthy();
@@ -157,7 +158,7 @@ describe("walkthroughs", () => {
     // 5. offline: Bangla spelling + meaning still saved, definition gets "Retry lookup"
     online = false;
     nav(/^Add$/);
-    fireEvent.change(await screen.findByLabelText("English word or short phrase"), { target: { value: "doctor" } });
+    fireEvent.change(await screen.findByLabelText("English word"), { target: { value: "doctor" } });
     fireEvent.click(screen.getByRole("button", { name: "Look up" }));
     await waitFor(() => expect((screen.getByLabelText(/Bangla pronunciation/) as HTMLInputElement).value).toBe("ডক্টর"), LONG);
     await waitFor(() => expect(screen.getByText(/Couldn't reach the dictionary/)).toBeTruthy(), LONG);
